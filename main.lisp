@@ -1,0 +1,5 @@
+(let ((doc (vcat (text "hello ~a" 1)
+                 (nest 4 (text "nested"))
+                 (hcat (text "goodbye ") (text "world")))))
+  (synth :output (synth :doc doc) 0))
+;; (pprint (funcall (text "~a" 1) :string 0))
