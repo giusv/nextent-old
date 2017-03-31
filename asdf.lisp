@@ -1,4 +1,5 @@
 (load "d:/giusv/lisp/extentr/lol.lisp")
+(load "d:/giusv/lisp/extentr/utils.lisp")
 (load "d:/giusv/lisp/extentr/parser.lisp")
 (load "d:/giusv/lisp/extentr/grammar.lisp")
 (load "d:/giusv/lisp/extentr/doc.lisp")

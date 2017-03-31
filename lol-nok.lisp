@@ -58,19 +58,6 @@
 
 
 
-(defun fact (x)
-  (if (= x 0)
-    1
-    (* x (fact (- x 1)))))
-
-(defun choose (n r)
-  (/ (fact n)
-     (fact (- n r))
-     (fact r)))
-
-
-
-
 (defun g!-symbol-p (s)
   (and (symbolp s)
        (> (length (symbol-name s)) 2)
@@ -258,7 +245,10 @@
 
 
 
-
+(defun arguments (lambda-list)
+ (reduce (lambda (item acc) (remove acc item)) 
+         '(&optional &rest &key)
+         :initial-value lambda-list))
 
 
 
@@ -270,7 +260,10 @@
              `(,(if (eq t (car d))
                   t
                   (list (car d)))
-               (apply (lambda ,@(cdr d))
+               (apply (lambda ,(cadr d)
+                        ,@(aif (arguments (cadr d))
+                               (list `(declare (ignorable ,@it)))) 
+                        ,@(cddr d))
                       ,(if (eq t (car d))
                          g!args
                          `(cdr ,g!args)))))
@@ -607,3 +600,13 @@
 (defmacro when-match ((test str) conseq &rest more-conseq)
   `(if-match (,test ,str)
      (progn ,conseq ,@more-conseq)))
+
+(defun remove-key (list key)
+  (case list
+    (nil nil)
+    (t (if (eq key (car list))
+           (cddr list)
+           (cons (car list) (remove-key (cdr list) key))))))
+
+(defun remove-keys (list &rest keys)
+  (reduce #'remove-key keys :initial-value list))

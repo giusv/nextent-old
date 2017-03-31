@@ -8,6 +8,7 @@
   (:string (indent) ())
   (:doc () this)
   (:extent () 0))
+
 (defprim nest (amount doc)
   (:pretty () `(nest (:amount ,amount :doc ,(synth :pretty doc))))
   (:output (indent) (synth :output doc (+ indent amount)))

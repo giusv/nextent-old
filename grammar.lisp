@@ -1,3 +1,32 @@
+(defun arg-list (sym args &key pref (func #'car))
+  (let ((l (mapcar func (gethash sym args))))
+    (if (null l)
+	nil
+	(if (null pref)
+	    l
+	    (cons pref l)))))
+
+(defun key-par-name (par)
+  (let ((par (car par)))
+    (if par
+        (cond ((symbolp par)
+               par)
+              ((consp par)
+               (cond ((symbolp (car par))
+                      (car par))
+                     ((consp (car par))
+                      (cadar par))))))))
+
+(defun arg-names (lambda-list)
+  (let* ((args (parse (destruc) lambda-list))
+	 (req (arg-list 'req args))
+	 (opt (arg-list 'opt args))
+	 (rest (arg-list 'rest args))
+	 (key (arg-list 'key args :func #'key-par-name)))
+    (append req opt rest key)))
+
+(pprint (arg-names '((a t1) (b t2) &optional (c t3) ((d 0 d-supplied-p) t4) &rest (e t5) &key (((:f-key f)) t6))))
+
 (defmacro defprim (name args &rest attrs)
   `(defun ,name ,args
      (pandoriclet ,(mapcar #`(,a1 ,a1) (arguments args))
@@ -8,6 +37,8 @@
 (defun synth-all (att boxlist &rest args)
   (mapcar (lambda (box) (apply #'synth att box args) boxlist)
           boxlist))
+
+
 
 ;; (defprim text (template &rest args)
 ;;   (:pretty () `(text (:template ,template :args ,args))))
